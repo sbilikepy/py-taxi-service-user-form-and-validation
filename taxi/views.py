@@ -119,4 +119,4 @@ def change_driver_assignment(request, pk):
     else:
         user.cars.remove(car)
 
-    return redirect('taxi:car-detail', pk=pk)
+    return redirect("taxi:car-detail", pk=pk)
