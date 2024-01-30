@@ -6,31 +6,7 @@ from django.core.exceptions import ValidationError
 from .models import *
 
 
-class DriverCreationForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
-        model = Driver
-        fields = UserCreationForm.Meta.fields + ("license_number",)
-
-
-class CarCreationForm(forms.ModelForm):
-    drivers = forms.ModelMultipleChoiceField(
-        queryset=get_user_model().objects.all(),
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
-
-    class Meta:
-        model = Car
-        fields = "__all__"
-
-
-class DriverLicenseUpdateForm(forms.ModelForm):
-    model = Driver
-
-    class Meta:
-        model = Driver
-        fields = ('license_number',)
-
+class LicenseNumberMixin:
     def clean_license_number(self):
         license_number = self.cleaned_data["license_number"]
 
@@ -53,3 +29,27 @@ class DriverLicenseUpdateForm(forms.ModelForm):
             raise ValidationError(validation_error_message)
 
         return license_number
+
+
+class DriverCreationForm(LicenseNumberMixin, UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = Driver
+        fields = UserCreationForm.Meta.fields + ("license_number",)
+
+
+class DriverLicenseUpdateForm(forms.ModelForm, LicenseNumberMixin):
+    class Meta:
+        model = Driver
+        fields = ('license_number',)
+
+
+class CarCreationForm(forms.ModelForm):
+    drivers = forms.ModelMultipleChoiceField(
+        queryset=get_user_model().objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+
+    class Meta:
+        model = Car
+        fields = "__all__"
