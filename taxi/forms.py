@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 
-from .models import *
+from .models import Car, Driver
 
 
 class LicenseNumberMixin:
@@ -19,8 +19,11 @@ class LicenseNumberMixin:
         if len(license_number) != license_number_len_required:
             validation_error_message += "- Consists only of 8 characters\n"
 
-        if not first_3_characters.isalpha() or not first_3_characters.isupper():
-            validation_error_message += "- First 3 characters are uppercase letters\n"
+        if not first_3_characters.isalpha() or \
+                not first_3_characters.isupper():
+            validation_error_message += (
+                "- First 3 characters are uppercase letters\n"
+            )
 
         if not last_5_characters.isnumeric():
             validation_error_message += "- Last 5 characters are digits"
