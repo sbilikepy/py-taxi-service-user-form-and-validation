@@ -1,0 +1,38 @@
+search for list
+
+
+forms.py -> new class (forms.Form) # because no direct model usage
+
+
+
+
+class ModelnameSearchField (forms.Form):
+	title = forms.Charfield(
+max_len =..,
+required = ...,
+label = "",
+widget = forms.TextInpit(
+attrs = {
+"placeholder": "Search by ..."
+}
+)
+)
+
+
+in booklist add function 
+get_context_data(self, *, object_list=None, **kwargs):
+    context = super(View, self).get_context_data(**kwargs)
+    context["search_form"] = MODELNAMESearchForm()
+	title = self.request.GET.get("title", "")
+context["title"] = modelnameForm(initial = {"title":title}
+)
+get_queryset(self):
+	form = MODELNAMESearchForm = NameModelForm(self.request.GET)
+OR	
+	title = self.request.GET.get("title")
+	if title:
+		return self.queryset.filter(title__icontains=title) or form.cleaned_data["title"]) 
+	return self.queryset
+
+
+add search field in model_list template 
