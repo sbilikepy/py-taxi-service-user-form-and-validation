@@ -109,14 +109,13 @@ class DriverLicenseUpdateView(LoginRequiredMixin, generic.UpdateView):
     template_name = "taxi/driver_license_update_form.html"
 
 
-@login_required
-def change_driver_assignment(request, pk):
-    car = get_object_or_404(Car, id=pk)
-    user = request.user
+class ChangeDriverAssignment(LoginRequiredMixin, generic.UpdateView):
+    def post(self, request, pk):
+        car = get_object_or_404(Car, id=pk)
+        user = request.user
 
-    if car not in user.cars.all():
-        user.cars.add(car)
-    else:
-        user.cars.remove(car)
-
-    return redirect("taxi:car-detail", pk=pk)
+        if car in user.cars.all():
+            user.cars.remove(car)
+        else:
+            user.cars.add(car)
+        return redirect("taxi:car-detail", pk=pk)
