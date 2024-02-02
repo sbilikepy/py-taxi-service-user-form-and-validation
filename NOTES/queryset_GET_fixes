@@ -1,0 +1,2 @@
+if get_queryset(self) in class-based view ->  make it once (in get_q.. function)
+if qset class atribute -> sometimes cash issues occures

@@ -1,0 +1,106 @@
+__________________________________________models______________________________
+base attributes and class Meta testing with Django automatically
+but i can test __str__ for example, as i reassign it manually
+
+
+to test app functional i can use test.py inside app (that's created automatically)
+unitest/pytest
+folder tests->test_detail
+
+django.test TestCase
+
+
+class ModelsTest(TestCase):
+    def test_somemodel_str(self):
+        new_obj = ModelName.objects.create(kwargs)
+        self.assertEqual(str(new_obj), "expected result")
+
+
+tests running in test env, no impact on DB
+to test User you need to import get_user_model
+example:
+get_user_model.objects.create(username="",........)
+assertEqual/True/False
+userobj.check_password() #bacause hash also for user model use .objects.create_user()
+
+______________________________admin_________________________________________
+test customisation only
+django.test TestCase, Client
+class AdminSiteTest(TestCase):
+    def setUp(self) <- running before every test call
+        self.client = Client()
+        self.admin_user = get_user_model().objects.create_superuser(
+        username=admin,
+        password="testadmin"
+        )
+        self.client.force_login(self.admin_user)
+        self.author = get_user_model().objects.create_user(
+        ..
+        ..
+        pseudonym="..."
+        )
+
+    def test_author_pseudonym(self):
+        # to use right url use reverse (from django.urls)
+        url = reverse("admin:catalog_author_changelist")
+        result = self.client.get(url) #HTTP response with page content
+        self.assertContains(res, self.author.pseudonym)
+
+    another case
+    url = reverse("admin:catalog_author_changelist", args=[self.author.id])
+
+________________________views__________________________________________________
+testing urls and views
+
+
+same principe for class and func based
+
+class PublicModelTests(TestCase): #loginrequiredmixin testing
+    def setUp(self) -> None:
+        self.client = Client()
+
+    def test_login_req(self):
+        url = reverse("catalog: literary-format-list")
+        response = self.client.get(url)
+        self.assertNotEqual(res.status_code, 200)
+
+
+class PublicModelTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+        username="test",
+        password="test123")
+        self.client created automatically because we inh of TestCase
+        self.client.force_login(self.user)
+
+    def test_retrieve_data_from_list(self):
+        model.objects.create(name="asd")
+        response  = self.client.get(reverse("catalog:l-f-list"))
+        self.asserEqual(response.status_code, 200)
+        l_formats = LiteraryFormat.objects.all()
+        self.assertEqual(
+        list(response.context["l_f_list"]),
+        list(l_formats)
+        )
+        self.assertTemplateUsed(response, template_name = "")
+
+
+
+_____________________FORMS____________________________________________________
+if we changing default functionality
+
+
+test for simple form
+
+
+class FormsTests(TestCase):
+    def test_form(self):
+        form_data = {
+        "":"",
+        } #all fields for testing
+        form = UserCreationForm(data=form_data)
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data, form_data)
+
+
+if you need logged user use setUp and force_login
